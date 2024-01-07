@@ -1,0 +1,34 @@
+kind: pipeline
+name: default
+type: docker
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+  - name: build
+    image: ghcr.io/codestation/drone-kaniko
+    environment:
+      NPM_CONFIG_REGISTRY:
+        from_secret: npm_config_registry
+    platforms:
+      - linux/arm64
+      - linux/amd64
+    settings:
+      repo: registry.megpoid.dev/codestation/excalidraw-backend
+      registry: registry.megpoid.dev
+      cache:
+        - registry.megpoid.dev/codestation/excalidraw-backend:${DRONE_BRANCH}-cache
+      config:
+        from_secret: regcreds
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      build_args_from_env:
+        - NPM_CONFIG_REGISTRY
+
+trigger:
+  branch:
+    - docker
